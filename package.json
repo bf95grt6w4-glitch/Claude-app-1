@@ -1,0 +1,19 @@
+{
+  "name": "adbarrier",
+  "version": "0.1.0",
+  "description": "A barrier between you and audio ads: detects ads in Spotify and podcasts, then mutes or skips them automatically.",
+  "type": "module",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "test": "node --test \"test/**/*.test.js\""
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "express": "^4.21.2",
+    "fast-xml-parser": "^4.5.3"
+  }
+}

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AdBarrier — automatic ad muting &amp; skipping</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>🛡️ AdBarrier</h1>
+    <p class="tagline">A barrier between you and audio ads — detected automatically, muted or skipped instantly.</p>
+  </header>
+
+  <main>
+    <!-- ============================== Spotify ============================== -->
+    <section class="card" id="spotify-card">
+      <div class="card-head">
+        <h2>Spotify Ad Shield</h2>
+        <span class="pill" id="spotify-pill">checking…</span>
+      </div>
+      <p class="hint">
+        Watches your Spotify playback and mutes the player during ad breaks, restoring your
+        volume when the music comes back. (Spotify's own ads can't be skipped, so muting is the barrier.)
+      </p>
+      <div id="spotify-body">
+        <div id="spotify-disconnected" hidden>
+          <a class="btn primary" href="/api/spotify/login">Connect Spotify</a>
+          <p class="hint" id="spotify-config-hint" hidden>
+            Server is missing <code>SPOTIFY_CLIENT_ID</code> / <code>SPOTIFY_CLIENT_SECRET</code> — see the README.
+          </p>
+        </div>
+        <div id="spotify-connected" hidden>
+          <div class="now-playing">
+            <div id="np-ad-banner" class="ad-banner" hidden>🔇 AD DETECTED — muted</div>
+            <div id="np-title">Nothing playing</div>
+            <div id="np-sub" class="hint"></div>
+          </div>
+          <div class="statline">
+            <span>Ads blocked this session: <strong id="ads-blocked">0</strong></span>
+            <button class="btn small" id="spotify-disconnect">Disconnect</button>
+          </div>
+          <details>
+            <summary>Event log</summary>
+            <ul id="spotify-events" class="events"></ul>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== Podcasts ============================= -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Podcast Ad Skipper</h2>
+        <span class="pill" id="claude-pill">…</span>
+      </div>
+      <p class="hint">
+        Play episodes here and ad segments are skipped automatically. Detection uses the episode
+        transcript (Claude when an API key is configured, keyword heuristics otherwise) — or mark
+        ads yourself once and they're remembered.
+      </p>
+
+      <form id="add-feed">
+        <input type="url" id="feed-url" placeholder="Paste an RSS feed URL, e.g. https://feeds.example.com/show.xml" required />
+        <button class="btn primary" type="submit">Add podcast</button>
+      </form>
+      <p class="error" id="feed-error" hidden></p>
+
+      <div id="podcast-list" class="podcast-list"></div>
+
+      <div id="episode-panel" hidden>
+        <h3 id="episode-podcast-title"></h3>
+        <div id="episode-list" class="episode-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================== Player =============================== -->
+  <footer id="player" hidden>
+    <div class="player-row">
+      <button class="btn" id="play-pause">▶</button>
+      <div class="player-main">
+        <div class="player-title" id="player-title"></div>
+        <div class="timeline" id="timeline">
+          <div class="timeline-ads" id="timeline-ads"></div>
+          <div class="timeline-progress" id="timeline-progress"></div>
+        </div>
+        <div class="player-times"><span id="time-cur">0:00</span><span id="time-dur">0:00</span></div>
+      </div>
+      <div class="player-actions">
+        <button class="btn small" id="detect-ads" title="Detect ads from the episode transcript">🔎 Detect ads</button>
+        <button class="btn small" id="mark-start" title="Mark the start of an ad at the current position">⛳ Ad start</button>
+        <button class="btn small" id="mark-end" title="Mark the end of the ad at the current position" disabled>🏁 Ad end</button>
+        <button class="btn small" id="clear-segments" title="Remove all saved ad segments for this episode">🗑</button>
+        <label class="toggle"><input type="checkbox" id="auto-skip" checked /> auto-skip</label>
+      </div>
+    </div>
+    <div class="skip-toast" id="skip-toast" hidden></div>
+    <audio id="audio" preload="metadata"></audio>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>
